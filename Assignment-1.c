@@ -1,53 +1,60 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
 
-
-int Isdigit(char ch) {
+int isDigit(char ch) {
     if(ch >= 48 && ch <= 57)
     return 1;
     else
     return 0;
 }
 
-
-int Isoperator(char op) {
+int isOperator(char op) {
     if(op == '+' || op == '-' || op == '*' || op == '/')
     return 1;
-    else 
+    else    
     return 0;
 }
 
-
-int perform_operation(int a, int b, char op) {
+int performOperation(int a, int b, char op) {
     switch (op) {
         case '+': return a + b;
         case '-': return a - b;
         case '*': return a * b;
-        case '/': return b != 0 ? a / b : 0; 
+        case '/': return b != 0 ? a / b : 0;
     }
     return 0;
 }
 
-
-int findprecedence(char op) {
+int findPrecedence(char op) {
     if (op == '*' || op == '/') 
-    return 2;
+        return 2;
     else if (op == '+' || op == '-') 
-    return 1;
+        return 1;
     else
-    return 0;
+        return 0;
 }
 
-
 int main() {
-    char expression[100];
+    char *expression = (char *)malloc(100 * sizeof(char));
+    if (expression==NULL) {
+        printf("Memory is not allocated.\n");
+        exit(1);
+    }
+
     printf("Enter the mathematical expression: ");
-    fgets(expression, sizeof(expression), stdin);
+    fgets(expression, 100, stdin);
     expression[strcspn(expression, "\n")] = 0; 
-    // Exclude white spaces
-    char exp[100];
+
+    char *exp = (char *)malloc(100 * sizeof(char));
+    if (exp==NULL) {
+        printf("Memory is not allocated.\n");
+        free(expression);
+        exit(1);
+    }
+
     int j = 0;
     for (int i = 0; expression[i] != '\0'; i++) {
         if (expression[i] != ' ') {
@@ -56,80 +63,120 @@ int main() {
     }
     exp[j] = '\0';
 
-    int values[100], top = -1; // Stack for values
-    char operators[100], op_top = -1; // Stack for operators
-    bool flag = true;
+    int *operands = (int *)malloc(100 * sizeof(int));    //stack for operands
+    if (operands==NULL) {
+        printf("Memory is not allocated.\n");
+        free(expression);
+        free(exp);
+        exit(1);
+    }
+
+    char *operators = (char *)malloc(100 * sizeof(char));     //stack for operators
+    if (operators==NULL) {
+        printf("Memory is not allocated.\n");
+        free(expression);
+        free(exp);
+        free(operands);
+        exit(1);
+    }
+
+    int top = -1; 
+    int opTop = -1; 
     int n = strlen(exp);
-    bool expect_operand = true; 
+    bool expectOperand = true;
 
     for (int i = 0; i < n; i++) {
-        if (Isdigit(exp[i])) {
+        if (isDigit(exp[i])) {
             int val = 0;
-            while (i < n && Isdigit(exp[i])) {
-                val = val * 10 + (exp[i] - '0');
-                i++;
-            }
-            i--; 
-            values[++top] = val;
-            expect_operand = false; 
-        } 
-        else if(i==0 && exp[i]=='+'){
-            continue;
-        }
-        else if (exp[i] == '-' && expect_operand) { 
-            int val = 0;
-            i++;
-            while (i < n && Isdigit(exp[i])) {
+            while (i < n && isDigit(exp[i])) {
                 val = val * 10 + (exp[i] - '0');
                 i++;
             }
             i--;
-            values[++top] = -val;
-            expect_operand = false; 
-        } else if (Isoperator(exp[i])) {
-            if (expect_operand) {
+            operands[++top] = val;
+            expectOperand = false;
+        } 
+        else if (i == 0 && exp[i] == '+') {
+            continue;
+        } 
+        else if (exp[i] == '-' && expectOperand) {
+            int val = 0;
+            i++;
+            while (i < n && isDigit(exp[i])) {
+                val = val * 10 + (exp[i] - '0');
+                i++;
+            }
+            i--;
+            operands[++top] = -val;
+            expectOperand = false;
+        } else if (isOperator(exp[i])) {
+            if (expectOperand) {
                 printf("Error! Invalid expression.\n");
+                free(expression);
+                free(exp);
+                free(operands);
+                free(operators);
                 return 0;
             }
-            while (op_top != -1 && 
-                   findprecedence(operators[op_top]) >= findprecedence(exp[i])) {
-                int b = values[top--];
-                int a = values[top--];
-                char oper = operators[op_top--];
+            while (opTop != -1 && 
+                   findPrecedence(operators[opTop]) >= findPrecedence(exp[i])) {
+                int b = operands[top--];
+                int a = operands[top--];
+                char oper = operators[opTop--];
 
                 if (oper == '/' && b == 0) {
                     printf("Division by zero Error.\n");
+                    free(expression);
+                    free(exp);
+                    free(operands);
+                    free(operators);
                     return 0;
                 }
-                values[++top] = perform_operation(a, b, oper);
+                operands[++top] = performOperation(a, b, oper);
             }
-            operators[++op_top] = exp[i];
-            expect_operand = true; 
-        } 
-        else {
+            operators[++opTop] = exp[i];
+            expectOperand = true;
+        } else {
             printf("Error! Invalid expression.\n");
+            free(expression);
+            free(exp);
+            free(operands);
+            free(operators);
             return 0;
         }
     }
 
-    if (expect_operand) {
+    if (expectOperand) {
         printf("Error! Invalid expression.\n");
+        free(expression);
+        free(exp);
+        free(operands);
+        free(operators);
         return 0;
     }
 
-    // Process remaining operators
-    while (op_top != -1) {
-        int b = values[top--];
-        int a = values[top--];
-        char oper = operators[op_top--];
+    while (opTop != -1) {
+        int b = operands[top--];
+        int a = operands[top--];
+        char oper = operators[opTop--];
 
         if (oper == '/' && b == 0) {
             printf("Division by zero Error.\n");
+            free(expression);
+            free(exp);
+            free(operands);
+            free(operators);
             return 0;
         }
-        values[++top] = perform_operation(a, b, oper);
+        operands[++top] = performOperation(a, b, oper);
     }
 
-    printf("The result is: %d\n", values[top]);
+    printf("The result is: %d\n", operands[top]);
+
+    free(expression);
+    free(exp);
+    free(operands);
+    free(operators);
+
     return 0;
 }
