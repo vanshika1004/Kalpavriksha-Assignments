@@ -16,11 +16,52 @@ int findLength(char name[50]){
     }
     return length;
 }
+void inputMatrix(int *rows,int *cols,char charray[*rows][*cols][50]){
+    for(int i=0;i<(*rows);i++){
+        for(int j=0;j<(*cols);j++){
+            printf("Name at (%d,%d): ",i,j);
+            scanf("%s",charray[i][j]);
+        }
+    }
+}
+
+void printMatrix(int *rows,int *cols,char charray[*rows][*cols][50]){
+    for(int i=0;i<(*rows);i++){
+        for(int j=0;j<(*cols);j++){
+            printf("%s ",charray[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+int countVowels(int *rows,int *cols,char charray[*rows][*cols][50],int count){
+    for(int i=0;i<(*rows);i++){
+        for(int j=0;j<(*cols);j++){
+            if(includesVowel(&charray[i][j][0])){
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+void findLongestName(int rows,int cols,char charray[rows][cols][50]){
+    char longestName[50]="";
+    for(int i=0;i<(rows);i++){
+        for(int j=0;j<(cols);j++){
+            if(findLength(charray[i][j])>findLength(longestName))
+            strcpy(longestName,charray[i][j]);
+        }
+    }
+    printf("The longest Name:%s\n",longestName);
+}
+
 
 int main(){
     int rows,cols;
     int count=0;
-    char longestName[50];
+
     while(1){
         printf("Enter the number of rows ranging 1-10: ");
         scanf("%d",&rows);
@@ -44,35 +85,14 @@ int main(){
 
     char charray[rows][cols][50];
     printf("Enter the names:\n");
-    for(int i=0;i<rows;i++){
-        for(int j=0;j<cols;j++){
-            printf("Name at (%d,%d): ",i,j);
-            scanf("%s",charray[i][j]);
-        }
-    }
+    inputMatrix(&rows,&cols,charray);
 
     printf("The 2D array of names is:\n");
-    for(int i=0;i<rows;i++){
-        for(int j=0;j<cols;j++){
-            printf("%s ",charray[i][j]);
-        }
-        printf("\n");
-    }
-    printf("\n");
+    printMatrix(&rows,&cols,charray);
     
-
-    for(int i=0;i<rows;i++){
-        for(int j=0;j<cols;j++){
-            if(includesVowel(&charray[i][j][0])){
-                count++;
-            }
-
-            if(findLength(charray[i][j])>findLength(longestName))
-            strcpy(longestName,charray[i][j]);
-        }
-    }
+    count=countVowels(&rows,&cols,charray,count);
 
     printf("Number of names starting with a vowel: %d\n",count);
-    printf("The longest Name:%s\n",longestName);
-
+    findLongestName(rows,cols,charray);
+    return 0;
 }
