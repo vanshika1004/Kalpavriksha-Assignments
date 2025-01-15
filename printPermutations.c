@@ -13,7 +13,7 @@ void swap(char *x, char *y)
 void printPermutations(char *str, int index, int n) 
 { 
 	if (index == n) 
-		printf("%s ", str); 
+		printf(" \" %s \" ", str); 
 	else
 	{ 
 		for (int j = index; j <= n; j++) 
@@ -33,6 +33,8 @@ int main()
 	scanf("%99[^\n]%*c",str);
 	int len = strlen(str); 
 	int index = 0;
-    printPermutations(str, index, len-1); 
+	printf("[");
+        printPermutations(str, index, len-1); 
+	printf("]");
 	return 0; 
 } 
