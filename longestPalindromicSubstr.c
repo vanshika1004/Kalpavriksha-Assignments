@@ -1,42 +1,54 @@
-#include <stdio.h>
-#include <string.h>
+#include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 
-void findLongestPalSubstr(char *str, char *ans) {
-    int n = strlen(str);
-    if (n == 0) {
-        ans[0] = '\0';
+void longestPalSubstring(char *str,char *res){
+    int len=strlen(str);
+    if(len == 0){
+        res[0]='\0';
         return;
     }
 
-    int start = 0, maxLen = 1;
-    
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j <= 1; j++) {
-            int low = i;
-            int high = i + j; 
-
-            while (low >= 0 && high < n && str[low] == str[high]) {
-                int currLen = high - low + 1;
-                if (currLen > maxLen) {
-                    start = low;
-                    maxLen = currLen;
-                }
-                low--;
-                high++;
-            }
+    res[0]=str[0];
+    res[1]='\0';
+    // for odd length
+    for(int i=0;i<len;i++){
+        int low = i;
+        int high = i;
+        while(low>=0 && high<len && str[low]==str[high]){
+            low--;
+            high++;
+        }
+        
+        low++;
+        high--;
+        if(high-low+1>strlen(res)){
+            strncpy(res,&str[low],high-low+1);
+            res[high-low+1]='\0';
+        }
+        
+        // for even length
+        low=i;
+        high=i+1;
+        while(low>=0 && high<len && str[low]==str[high]){
+            low--;
+            high++;
+        }
+        
+        low++;
+        high--;
+        if(high-low+1>strlen(res)){
+            strncpy(res,&str[low],high-low+1);
+            res[high-low+1]='\0';
         }
     }
-
-    strncpy(ans, str + start, maxLen);
-    ans[maxLen] = '\0';
 }
-
-int main() {
+int main(){
     char* str = (char*)malloc(100 * sizeof(char));
     scanf("%99[^\n]%*c",str);
-    char* ans = (char*)malloc(100 * sizeof(char));
-    findLongestPalSubstr(str, ans);
-    printf("%s\n", ans);
+    char* res = (char*)malloc(100 * sizeof(char));
+
+    longestPalSubstring(str,res);
+    printf("The longest Palindromic substring is %s",res);
     return 0;
 }
