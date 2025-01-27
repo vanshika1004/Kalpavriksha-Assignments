@@ -36,8 +36,16 @@ void printArray(int *arr , int size){
 }
 int main(){
     int size;
-    printf("Enter the size of array you want to sort.\n");
-    scanf("%d" , &size);
+    while(1){
+        printf("Enter the size of array you want to sort.\n");
+        scanf("%d" , &size);
+        if(size>0){
+            break;
+        }
+        else{
+            printf("Enter a positive integer greater than Zero.\n");
+        }
+    }
     int* arr = (int*)malloc(size * sizeof(int));
     
     takeInput(arr , size);
