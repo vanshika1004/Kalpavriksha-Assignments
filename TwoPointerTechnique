@@ -1,0 +1,55 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+void takeInput(int *arr , int size){
+    for(int index=0 ; index < size ; index++){
+        scanf("%d",&arr[index]);
+    }
+}
+
+void pushZeroesToEnd(int *arr,int size){
+    int index = 0;
+    int nonZero = 0;
+    while(index<size){
+        if(arr[index]!=0){
+            arr[nonZero++] = arr[index]; 
+        }
+        index++;
+    }
+    while(nonZero<size){
+        arr[nonZero++] = 0;
+    }
+}
+
+void printArray(int *arr , int size){
+    for(int index = 0 ; index < size ; index++){
+        printf("%d " , arr[index]);
+    }
+    printf("\n");
+}
+int main(){
+    int size;
+    while(1){
+        printf("Enter the size of array you want to sort.\n");
+        scanf("%d" , &size);
+        if(size>0){
+            break;
+        }
+        else{
+            printf("Enter a positive integer greater than Zero.\n");
+        }
+    }
+    int* arr = (int*)malloc(size * sizeof(int));
+    
+    takeInput(arr , size);
+    
+    printf("The array is: \n");
+    
+    pushZeroesToEnd(arr, size);
+    
+    printArray(arr,size);
+    
+    free(arr);
+    return 0;
+}
