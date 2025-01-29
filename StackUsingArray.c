@@ -34,7 +34,7 @@ void pop(){
     StackTop--;
 }
 
-void top(){
+void peek(){
     if(isEmpty()){
         printf("Can't Get the top as Stack is Empty\n");
         return;
@@ -79,7 +79,7 @@ int main(){
                 break;
                 
             case 3: 
-                top();
+                peek();
                 break;
                 
             case 4:
