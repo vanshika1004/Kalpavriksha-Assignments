@@ -78,11 +78,11 @@ int main(){
     printf("Queue operations are:\n");
     do{
         
-        printf("1. Add an element to the stack.\n");
-        printf("2. Remove the top element from the stack.\n");
+        printf("1. Add an element to the queue.\n");
+        printf("2. Remove the top element from the queue.\n");
         printf("3. Retrieve the top element without removing it.\n");
-        printf("4. Check if the stack is empty.\n");
-        printf("5. Return the number of elements in the stack.\n");
+        printf("4. Check if the queue is empty.\n");
+        printf("5. Return the number of elements in the queue.\n");
         printf("6. Exit.\n");
         printf("Enter your choice: ");
         scanf("%d",&choice);
